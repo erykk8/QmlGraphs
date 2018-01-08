@@ -3,11 +3,12 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 1.4
 
 GridLayout {
-    property alias mode: graphArea.mode
+    property alias mode: graph.mode
+    property alias graph: graph
     function adjustZoom(amount) {
-        if(amount < 1 && graphArea.scale < 0.01) return
-        if(amount > 1 && graphArea.scale > 8) return
-        graphArea.adjustZoom(amount)
+        if(amount < 1 && graph.scale < 0.01) return
+        if(amount > 1 && graph.scale > 8) return
+        graph.adjustZoom(amount)
     }
 
     id: graphLayout
@@ -27,12 +28,13 @@ GridLayout {
 
         flickableItem.contentX: flickableItem.contentWidth/2 - width/2
         flickableItem.contentY: flickableItem.contentHeight/2 - height/2
+        flickableItem.interactive: graph.mode === "Move"
 
 
         Graph {
             width: 16384
             height: 16384
-            id: graphArea
+            id: graph
             function adjustZoom(amount) {
                 scale *= amount
             }
@@ -68,9 +70,11 @@ GridLayout {
             Layout.fillWidth: true
             height: 40
             radius: 4
+            property int n1: modelData.node1.nodeNumber
+            property int n2: modelData.node2.nodeNumber
             Text {
                 anchors.centerIn: parent
-                text: modelData.node1.nodeNumber + ' --- ' + modelData.node2.nodeNumber
+                text: n1 + ' --- ' + n2
             }
         }
     }
@@ -98,7 +102,7 @@ GridLayout {
                 ColumnLayout {
                     width: 200
                     Repeater {
-                        model: graphArea.nodeArray
+                        model: graph.nodeArray
                         delegate: nodeDelegate
                     }
                 }
@@ -130,7 +134,7 @@ GridLayout {
                 ColumnLayout {
                     width: 200
                     Repeater {
-                        model: graphArea.edgeArray
+                        model: graph.edgeArray
                         delegate: edgeDelegate
                     }
                 }

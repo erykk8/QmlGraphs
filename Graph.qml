@@ -1,12 +1,21 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.4
 import "Graph.js" as Graph
 
 
 Rectangle {
-    id: graphArea
+    id: graph
     property string mode: "Node"
     property var nodeArray: []
     property var edgeArray: []
+
+    function loadFromFile(file) {
+        Graph.loadFromFile(file)
+    }
+
+    function saveToFile(file) {
+        Graph.saveToFile(file)
+    }
 
     function update() {
         var na = nodeArray
@@ -38,56 +47,7 @@ Rectangle {
         {
             nodeArray[nodeArray.length-1].kys()
         }
-    }
-
-    function createNode(x, y) {
-        createNodeAbsolutePosition(x + width/2, y + width/2)
-    }
-
-    function createNodeAbsolutePosition(x, y) {
-        var node = Graph.createNode(x,y)
-        nodeArray.push(node)
         update()
-    }
-
-    function createEdge(i, j) {
-        var n1 = nodeArray[i]
-        var n2 = nodeArray[j]
-        var edge = Graph.createEdge(n1, n2)
-        edgeArray.push(edge)
-        update()
-    }
-
-    function loadFromFile(file) {
-        Graph.loadFromFile(file)
-    }
-
-    function saveToFile(file) {
-        Graph.saveToFile(file)
-    }
-
-    function startEdge(x, y) {
-        if(!edgeArea.edgeStarted) {
-            var startNode = nodeArea.childAt(x, y)
-            if(graphArea.nodeArray.indexOf(startNode) === -1) {
-                edgeArea.startNode = null
-                return
-            }
-            edgeArea.startNode = startNode
-            edgeLine.startX = startNode.nodeX
-            edgeLine.startY = startNode.nodeY
-            edgeArea.edgeStarted = true
-        }
-    }
-
-    function endEdge(x, y) {
-        if(edgeArea.edgeStarted) {
-            var endNode = nodeArea.childAt(x, y)
-            if(graphArea.nodeArray.indexOf(endNode) != -1) {
-                createEdge(edgeArea.startNode.nodeNumber, endNode.nodeNumber)
-            }
-            edgeArea.edgeStarted = false
-        }
     }
 
     Item {
@@ -110,17 +70,17 @@ Rectangle {
         id: nodeArea
         anchors.fill: parent
         MouseArea {
-            visible: graphArea.mode === "Node"
+            visible: graph.mode === "Node"
             anchors.fill: parent
-            onClicked: createNodeAbsolutePosition(mouse.x, mouse.y)
+            onClicked: Graph.createNode(mouse.x, mouse.y)
         }
 
         MouseArea {
             id: nodeMouseArea
-            visible: graphArea.mode === "Edge"
+            visible: graph.mode === "Edge"
             anchors.fill: parent
-            onPressed: startEdge(mouse.x, mouse.y)
-            onReleased: endEdge(mouse.x, mouse.y)
+            onPressed: Graph.startEdge(mouse.x, mouse.y)
+            onReleased: Graph.endEdge(mouse.x, mouse.y)
         }
     }
 }

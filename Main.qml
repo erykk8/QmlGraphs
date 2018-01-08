@@ -17,8 +17,41 @@ ApplicationWindow {
     FileDialog {
         id: fileDialog
         folder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
-        onAccepted: fileMode === FileDialog.OpenFile ? graphArea.loadFromFile(file) : graphArea.saveToFile(file)
+        onAccepted: fileMode === FileDialog.OpenFile ? graphArea.graph.loadFromFile(file) : graphArea.graph.saveToFile(file)
     }
+
+    Action {
+        id: nodeMode
+        property string mode: "Node"
+        text: "&Node"
+        shortcut: mode[0]
+        onTriggered: graphArea.mode = mode
+    }
+
+    Action {
+        id: edgeMode
+        property string mode: "Edge"
+        text: "&Edge"
+        shortcut: mode[0]
+        onTriggered: graphArea.mode = mode
+    }
+
+    Action {
+        id: moveMode
+        property string mode: "Move"
+        text: "&Move"
+        shortcut: mode[0]
+        onTriggered: graphArea.mode = mode
+    }
+
+    Action {
+        id: deleteMode
+        property string mode: "Delete"
+        text: "&Delete"
+        shortcut: mode[0]
+        onTriggered: graphArea.mode = mode
+    }
+
 
     menuBar: MenuBar {
         id: menuBar
@@ -41,7 +74,7 @@ ApplicationWindow {
                 action: Action {
                     text: "New"
                     shortcut: StandardKey.New
-                    onTriggered: graphArea.clear()
+                    onTriggered: graphArea.graph.clear()
                 }
             }
 
@@ -93,18 +126,17 @@ ApplicationWindow {
             id: toolbarLayout
             anchors.verticalCenter: parent.verticalCenter
             Repeater {
-                model: ["Node", "Edge", "Move", "Delete"]
+                model: [nodeMode, edgeMode, moveMode, deleteMode]
                 ToolButton {
                     anchors.top: parent.top
-                    text: modelData
 
                     ColorOverlay {
                         anchors.fill: parent
                         source: parent
-                        color: graphArea.mode === modelData ? "#2200ff00" : "transparent"
+                        color: graphArea.mode === action.mode ? "#3200ff00" : "transparent"
                     }
 
-                    onClicked: graphArea.mode = modelData
+                    action: modelData
                 }
             }
         }

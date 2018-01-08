@@ -10,8 +10,8 @@ Rectangle {
     transformOrigin: Item.Center
 
 
-    property int relativeX: nodeX-graphArea.width/2
-    property int relativeY: nodeY-graphArea.height/2
+    property int relativeX: nodeX-graph.width/2
+    property int relativeY: nodeY-graph.height/2
     property int nodeX: x+width/2
     property int nodeY: y+height/2
     property int nodeNumber: 0
@@ -36,24 +36,23 @@ Rectangle {
     }
 
     function kys() {
-        var edge
         var len = edgeArray.length
         for(var i = 0; i < len; ++i)
         {
             edgeArray[0].kys()
         }
-        graphArea.nodeDied(nodeNumber)
+        graph.nodeDied(nodeNumber)
         destroy();
     }
 
     MouseArea {
-        visible: graphArea.mode === "Delete"
+        visible: graph.mode === "Delete"
         anchors.fill: parent
         onClicked: parent.kys()
     }
 
     MouseArea {
-        visible: graphArea.mode === "Move"
+        visible: graph.mode === "Move"
         anchors.fill: parent
         drag.target: parent
     }
